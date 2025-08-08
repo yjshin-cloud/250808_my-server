@@ -1,5 +1,4 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-
 <html>
 <head>
     <title>내가 만든 챗봇</title>
@@ -12,7 +11,7 @@
         }
         body {
             font-family: 'SunBatang-Light', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
-            background: #e5e5e5;
+            background: #f9f9f9;
             margin: 0;
             min-height: 100vh;
             display: flex;
@@ -20,17 +19,30 @@
             align-items: flex-start;
         }
         .chat-frame {
-            background: #f9f9f9;
+            background: #e3f2fd;
             border-radius: 18px;
             box-shadow: 0 4px 24px 0 rgba(31, 38, 135, 0.07);
             margin-top: 60px;
-            padding: 38px 30px 30px 30px;
+            padding: 28px 18px 18px 18px;
             min-width: 340px;
-            min-height: 350px;
+            min-height: 400px;
+            width: 380px;
+            display: flex;
+            flex-direction: column;
+        }
+        .message-list {
+            flex: 1 1 0;
+            min-height: 120px;
+            max-height: 220px;
+            overflow-y: auto;
+            margin-bottom: 18px;
+            padding-right: 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
         .bubble-row {
             display: flex;
-            margin-bottom: 14px;
         }
         .bubble-user {
             margin-left: auto;
@@ -60,7 +72,7 @@
             display: flex;
             gap: 8px;
             align-items: center;
-            margin-top: 25px;
+            margin-top: 8px;
         }
         input[name="question"] {
             flex: 1;
@@ -99,22 +111,49 @@
 </head>
 <body>
 <div class="chat-frame">
-    <!-- 질문 -->
-    <div class="bubble-row">
-        <div class="bubble-user">
-            질문 : <%= request.getAttribute("question") != null ? request.getAttribute("question") : " " %>
-        </div>
-    </div>
-    <!-- 답변 -->
-    <div class="bubble-row">
-        <div class="bubble-bot">
-            답변 : <%= request.getAttribute("data") != null ? request.getAttribute("data") : " " %>
-        </div>
+    <div class="message-list" id="chatMsgList">
+        <!-- 기존 질문/답변 한 쌍만 표시하는 로직은 그대로 -->
+        <%
+            String question = (String)request.getAttribute("question");
+            String answer = (String)request.getAttribute("data");
+            if (question != null && !"".equals(question.trim())) {
+        %>
+            <div class="bubble-row">
+                <div class="bubble-user">
+                    질문 : <%= question %>
+                </div>
+            </div>
+        <%
+            }
+            if (answer != null && !"".equals(answer.trim())) {
+        %>
+            <div class="bubble-row">
+                <div class="bubble-bot">
+                    답변 : <%= answer %>
+                </div>
+            </div>
+        <%
+            }
+            if ((question == null || "".equals(question.trim())) && (answer == null || "".equals(answer.trim()))) {
+        %>
+            <div style="color:#aaa;text-align:center;padding:30px 0;">무엇이든 물어보세요.<br>AI가 바로 답변해드립니다!</div>
+        <%
+            }
+        %>
     </div>
     <form method="post">
         <input name="question" placeholder="메시지를 입력하세요" autocomplete="off" required>
-        <button type="submit">전송</button>
+        <button type="submit">질문하기</button>
     </form>
 </div>
+<script>
+    // 메시지 영역 스크롤 항상 하단
+    window.onload = function() {
+        var msgList = document.getElementById('chatMsgList');
+        if (msgList) {
+            msgList.scrollTop = msgList.scrollHeight;
+        }
+    };
+</script>
 </body>
 </html>
