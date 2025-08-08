@@ -4,6 +4,6 @@
     <meta charset="UTF-8">
 </head>
 <body>
-<h2>안녕 월드!</h2>
+<h2>Render Deploy!</h2>
 </body>
 </html>
