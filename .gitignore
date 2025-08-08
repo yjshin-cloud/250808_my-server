@@ -39,3 +39,6 @@ build/
 
 ### 스마트톰캣
 .smarttomcat
+
+### Dotenv
+.env
