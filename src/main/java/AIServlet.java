@@ -13,7 +13,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 // [2]
-@WebServlet("/ai") // localhost:8080/ai
+//@WebServlet("/ai") // localhost:8080/ai
+@WebServlet("/") // localhost:8080/
 // 이 서블릿을 통해 호출
 public class AIServlet extends HttpServlet { // [1]
     // doGet, doPost
@@ -21,7 +22,12 @@ public class AIServlet extends HttpServlet { // [1]
     // 경로에 들어갔을 때 (GET) -> 그 때 호출될 기능
     @Override // [3]
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Dotenv dotenv = Dotenv.load(); // [7]
+        // [I] 배포 시의 이슈 : dotenv를 github에 푸시되는데 포함하면 X
+        // - 환경변수를 직접 주입함 (render에서)
+//        Dotenv dotenv = Dotenv.load(); // [7]
+        Dotenv dotenv = Dotenv.configure()
+                .ignoreIfMissing().load(); // 배포환경에서, '없으면 무시'
+        // .env 파일이 없으면 에러를 던지는 설정
         String apiKey = dotenv.get("GOOGLE_API_KEY");
         // [8] -> resources/.env
         Client client = Client.builder()
@@ -45,7 +51,9 @@ public class AIServlet extends HttpServlet { // [1]
         // input/post -> paramter
         String question = req.getParameter("question");
         // [2]
-        Dotenv dotenv = Dotenv.load();
+        // [II]
+        Dotenv dotenv = Dotenv.configure()
+                .ignoreIfMissing().load(); // 배포환경에서, '없으면 무시'
         String apiKey = dotenv.get("GOOGLE_API_KEY");
         Client client = Client.builder()
                 .apiKey(apiKey).build();
